@@ -1,18 +1,13 @@
 public class  AccountCurrent extends Account{
 
-    public AccountCurrent(Client owner, double balance, int ID, double limit, String agency) {
-        super(owner, balance, ID, limit, agency);
+    public AccountCurrent(Client owner, double balance, int ID, double accountlimit, double withdraw, String agency) {
+        super(owner, balance, ID, accountlimit, withdraw, agency);
     }
 
     public void setLimit(double newlimit){
 
-        if(newlimit<-100){
-            System.out.println("ERRO!  O limite minimo é de R$ -100,00");
-        }
-        else {
-            limit = newlimit;
-        }
-
+        if(newlimit<-100){ throw new IllegalArgumentException("ERRO!  O limite minimo é de R$ -100,00"); }
+            accountlimit = newlimit;
     }
 
     @Override

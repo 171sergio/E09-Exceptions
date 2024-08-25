@@ -6,7 +6,7 @@ public abstract class Account implements ITaxa{
     protected Client owner;
     private double balance;
     private int ID;
-    protected double limit;
+    protected double accountlimit, withdrawlimit;
     private String agency;
 
 
@@ -14,20 +14,21 @@ public abstract class Account implements ITaxa{
 
     public static int totAccounts=0;
 
-    public Account(Client owner, double balance, int ID, double limit, String agency) {
+    public Account(Client owner, double balance, int ID, double accountlimit, double withdraw, String agency) {
         this.owner = owner;
         this.balance = balance;
         this.ID = ID;
-        this.limit = limit;
+        this.accountlimit = accountlimit;
+        this.withdrawlimit = withdrawlimit;
         this.agency = agency;
         totAccounts++;
     }
 
 
-    boolean deposit(float value) throws NegativeValueException {
+    boolean deposit(float value) throws NegativeValueException, AccountLimitException{
 
             if(value<0.0){ throw new NegativeValueException("ERRO: Depósito com valor negativo.");}
-
+            if(value + this.balance > this.accountlimit){ throw new AccountLimitException("ERRO: Com o depósito deste o limite da conta ser excedido"); }
             this.balance += value;
             operations.add(new OperationDeposit(value));
             return true;
@@ -35,16 +36,17 @@ public abstract class Account implements ITaxa{
     }
 
 
-    boolean withdraw(float value) throws NegativeValueException, AccountLimitExceededException{
+    boolean withdraw(float value) throws NegativeValueException, WithDrawLimitException, AccountLimitException{
             if (value < 0.0){ throw new NegativeValueException("ERRO: Saque com valor negativo."); }
-            if(value > this.balance){ throw new AccountLimitExceededException("ERRO: Valor desejado é maior que o saldo."); }
+            if(value > this.accountlimit){ throw new AccountLimitException("ERRO: Valor desejado é maior que o saldo."); }
+            if(value > this.withdrawlimit){ throw new WithDrawLimitException("ERRO: O valor desejado é maior que o limite de saque da conta."); }
             this.balance -= value;
             operations.add(new OperationWithdraw(value));
             return true;
     }
 
 
-    boolean transfer(Account destineAccount, float value) throws NegativeValueException, AccountLimitExceededException{
+    boolean transfer(Account destineAccount, float value) throws NegativeValueException, WithDrawLimitException, AccountLimitException{
         boolean withdrawMade = this.withdraw(value);
         if (withdrawMade) {
             boolean deposit = destineAccount.deposit(value);
@@ -59,7 +61,7 @@ public abstract class Account implements ITaxa{
 		String accountStr = " Nome do dono da conta: " + this.owner.name+ "\n" +
      " Número da conta: " + this.ID+ "\n" +
      " Saldo atual: " + this.balance+ "\n" +
-     " Limite: " + this.limit + "\n\n" ;
+     " Limite: " + this.accountlimit + "\n\n" ;
 
 		return accountStr;
 	}
@@ -113,11 +115,11 @@ public abstract class Account implements ITaxa{
     }
 
     public double getLimit() {
-        return limit;
+        return accountlimit;
     }
 
     public void setLimit(int limit) {
-        this.limit = limit;
+        this.accountlimit = limit;
     }
 
     public abstract void setLimit(double newlimit);
