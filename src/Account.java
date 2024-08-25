@@ -24,29 +24,27 @@ public abstract class Account implements ITaxa{
     }
 
 
-    boolean deposit(float value) {
-        if (value > 0.0) {
+    boolean deposit(float value) throws NegativeValueException {
+
+            if(value<0.0){ throw new NegativeValueException("ERRO: Depósito com valor negativo.");}
+
             this.balance += value;
             operations.add(new OperationDeposit(value));
             return true;
-        } else {
-            return false;
-        }
+
     }
 
 
-    boolean withdraw(float value) {
-        if (value > 0.0 && value <= this.balance) {
+    boolean withdraw(float value) throws NegativeValueException, AccountLimitExceededException{
+            if (value < 0.0){ throw new NegativeValueException("ERRO: Saque com valor negativo."); }
+            if(value > this.balance){ throw new AccountLimitExceededException("ERRO: Valor desejado é maior que o saldo."); }
             this.balance -= value;
             operations.add(new OperationWithdraw(value));
             return true;
-        } else {
-            return false;
-        }
     }
 
 
-    boolean transfer(Account destineAccount, float value) {
+    boolean transfer(Account destineAccount, float value) throws NegativeValueException, AccountLimitExceededException{
         boolean withdrawMade = this.withdraw(value);
         if (withdrawMade) {
             boolean deposit = destineAccount.deposit(value);
