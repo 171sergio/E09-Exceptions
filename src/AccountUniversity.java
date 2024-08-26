@@ -4,10 +4,10 @@ public class AccountUniversity extends Account{
         super(owner, balance, ID, accountlimit, withdraw, agency);
     }
 
-    public void setLimit(double newlimit){
+    public void setLimit(double newlimit) throws IllegalArgumentException{
 
             if(newlimit>500){ throw new IllegalArgumentException("ERROR! O limite máximo é de R$500"); }
-            if(newlimit < 0){ throw new IllegalArgumentException("ERROR! O limite mínimo é de R$0"); }
+            else if(newlimit < 0){ throw new IllegalArgumentException("ERROR! O limite mínimo é de R$0"); }
             accountlimit = newlimit;
 
     }

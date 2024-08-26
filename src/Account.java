@@ -14,7 +14,7 @@ public abstract class Account implements ITaxa{
 
     public static int totAccounts=0;
 
-    public Account(Client owner, double balance, int ID, double accountlimit, double withdraw, String agency) {
+    public Account(Client owner, double balance, int ID, double accountlimit, double withdrawlimit, String agency) {
         this.owner = owner;
         this.balance = balance;
         this.ID = ID;
@@ -114,11 +114,11 @@ public abstract class Account implements ITaxa{
         return balance;
     }
 
-    public double getLimit() {
+    public double getAccountlimit() {
         return accountlimit;
     }
 
-    public void setLimit(int limit) {
+    public void setAccountLimit(double limit) {
         this.accountlimit = limit;
     }
 
